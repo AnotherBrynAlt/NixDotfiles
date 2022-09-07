@@ -2,6 +2,9 @@
 
 {
   imports = 
+    (import ../modules/commandline) ++
+    (import ../modules/editors) ++
+    (import ../modules/shells) ++
     [(../modules/editors/visual-studio-code/default.nix)];
 
   home = {
