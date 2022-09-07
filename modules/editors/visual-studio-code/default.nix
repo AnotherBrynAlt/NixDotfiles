@@ -8,7 +8,7 @@
         arrterian.nix-env-selector
 	bbenoist.nix
 	elmtooling.elm-ls-vscode
-        hbenl.vscode-test-explorer
+#        hbenl.vscode-test-explorer
         kamadorueda.alejandra
       ];
     };
