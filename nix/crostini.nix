@@ -4,8 +4,8 @@
   imports = 
     (import ../modules/commandline) ++
     (import ../modules/editors) ++
-    (import ../modules/shells) ++
-    [(../modules/editors/visual-studio-code/default.nix)];
+    [(import ../modules/editors/helix/default.nix)] ++
+    (import ../modules/shells);
 
   home = {
     packages = with pkgs; [
@@ -13,23 +13,19 @@
       hello
     ];
     
-    pointerCursor = {
-      name = "Dracula-cursors";
-      package = pkgs.dracula-theme;
-      size = 16;
+    sessionVariables = {
+      GDK_SCALE = "2";
+      GDK_DPI_SCALE = "0.5";
     };
+  };
+  
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
   };
 
   gtk = {
-    enable = true;
-    theme = {
-      name = "Dracula";
-      package = pkgs.dracula-theme;
-    };
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
+    enable = false;
   };
 
   programs = {
