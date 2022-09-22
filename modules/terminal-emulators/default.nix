@@ -1,4 +1,4 @@
 [
 ./alacritty
-#  ./wezterm # Unavailable in 22.05
+./wezterm
 ]
