@@ -1,5 +1,0 @@
-[
-  ./helix
-  ./micro
-  ./neovim
-]

@@ -2,62 +2,85 @@
   description = "Bryn/Sof NixOS Flake";
 
   inputs = {
-    nixpkgs = {
-      # url = "github:NixOS/nixpkgs/nixos-22.05";
+    # Opinionated NixL Formatter
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # Useful Flake Functions
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
+
+    # Declarative Configuration of Userland
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # NixL LSP
+    nil = {
+      url = "github:oxalica/nil";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # Build System
+    nix = {
+      url = "github:nixos/nix";
+    };
+
+    # NixGL For Non-NixOS Hardware Acceleration
+    nixgl = {
+      url = "github:guibou/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    nixpkgs-2205 = {
+      url = "github:NixOS/nixpkgs/nixos-22.05";
+    };
+
+    nixpkgs-master = {
+      url = "github:NixOS/nixpkgs/master";
+    };
+
+    nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
 
-    home-manager = {
-      # url = "github:nix-community/home-manager/release-22.05";
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nur = {
-      url = "github:nix-community/NUR";
-    };
-
-    nixgl = {
-      url = "github:guibou/nixGL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    alejandra = {
-      url = "github:kamadorueda/alejandra/3.0.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    rnix-lsp = {
-      url = "github:nix-community/rnix-lsp";
-      inputs.nixpkgs.follows = "nixpkgs";
+    # NixL Static Analyzer and Linter
+    statix = {
+      url = "github:nerdypepper/statix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    nur,
-    nixgl,
-    alejandra,
-    rnix-lsp,
-    ...
-  }: let
-    user = "bryn";
-    location = "$HOME/.dotfiles";
-  in {
-    nixosConfigurations = (
-      import ./nixos {
-        inherit (nixpkgs) lib;
-        inherit nixpkgs home-manager nur alejandra rnix-lsp user location;
-      }
-    );
+  outputs = {self, ...} @ inputs:
+    inputs.flake-utils.lib.eachDefaultSystem (
+      system: let
+        nixpkgs = inputs.nixpkgs-unstable.legacyPackages.${system};
 
-    homeConfigurations = (
-      import ./nix {
-        inherit (nixpkgs) lib;
-        inherit nixpkgs home-manager nixgl nur alejandra rnix-lsp user;
-      }
+        user = "bryn";
+      in
+        with inputs; {
+          # nix flake check - https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-check.html
+          checks.${system} = import ./checks inputs;
+
+          # Dev Shell with NixL Formatting Tools
+          devShell = nixpkgs.mkShell {
+            packages = [
+              alejandra.defaultPackage.${system}
+              nil.packages.${system}.nil
+              statix.defaultPackage.${system}
+            ];
+          };
+
+          # nix fmt - https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html
+          formatter.${system} = alejandra.defaultPackage.${system};
+
+          homeConfigurations = import ./home inputs;
+
+          nixosConfigurations = import ./nixos inputs;
+        }
     );
-  };
 }
