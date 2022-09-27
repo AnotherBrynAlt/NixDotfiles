@@ -1,11 +1,7 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs = {
-  	wezterm = {
-  	  enable = true;
-  	  extraConfig = ''
-  	  '';
-  	};
+    wezterm = {
+      enable = true;
+    };
   };
 }

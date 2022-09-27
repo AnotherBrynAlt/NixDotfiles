@@ -1,4 +1,4 @@
 [
-./alacritty
-./wezterm
+  ./alacritty
+  ./wezterm
 ]
