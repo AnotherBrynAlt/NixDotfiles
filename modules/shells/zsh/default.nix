@@ -1,12 +1,10 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs = {
-  	zsh = {
-  	  enable = true;
-  	  dotDir = ".config/zsh";
-  	  enableAutosuggestions = true;
-  	  enableSyntaxHighlighting = true;
-  	};
+    zsh = {
+      enable = true;
+      dotDir = ".config/zsh";
+      enableAutosuggestions = true;
+      enableSyntaxHighlighting = true;
+    };
   };
 }

@@ -1,11 +1,9 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs = {
-  	neovim = {
-  	  enable = true;
-  	  viAlias = true;
-  	  vimAlias = true;
-  	};
+    neovim = {
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
+    };
   };
 }

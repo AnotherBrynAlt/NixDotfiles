@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   services = {
     xserver = {
       enable = true;
@@ -11,13 +14,13 @@
 
       displayManager = {
         sddm = {
-	  enable = true;
-	};
+          enable = true;
+        };
       };
       desktopManager = {
         plasma5 = {
-	  enable = true;
-	};
+          enable = true;
+        };
       };
     };
   };

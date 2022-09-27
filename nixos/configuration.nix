@@ -1,34 +1,40 @@
-{ config, lib, pkgs, inputs, user, location, ... }:
-
 {
-  imports =
-    [
-    ];
+  config,
+  lib,
+  pkgs,
+  attributes,
+  user,
+  location,
+  alejandra,
+  ...
+}: {
+  imports = [
+  ];
 
   networking.hostName = "nixos";
 
   users.users.${user} = {
-  	isNormalUser = true;
-  	extraGroups = [ "wheel" "video" "audio" ];
-  	shell = pkgs.zsh;
+    isNormalUser = true;
+    extraGroups = ["wheel" "video" "audio"];
+    shell = pkgs.zsh;
   };
 
   environment = {
-  	variables = {
-  	  TERMINAL = "alacritty"; # Wezterm Unavailable in home-manager 22.05
-  	  EDITOR = "nvim";
-  	  VISUAL = "nvim";
-  	};
-  	systemPackages = with pkgs; [
+    variables = {
+      TERMINAL = "wezterm";
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+    };
+    systemPackages = with pkgs; [
       curl
       git
-  	  killall
+      killall
       micro
-  	  nano
-  	  pciutils
-  	  usbutils
-  	  wget
-  	];
+      nano
+      pciutils
+      usbutils
+      wget
+    ];
   };
 
   # Enable networking
@@ -61,15 +67,15 @@
   programs.dconf.enable = true;
 
   fonts.fonts = with pkgs; [
-  	source-code-pro
-  	jetbrains-mono
-  	font-awesome
-  	corefonts
-  	(nerdfonts.override {
-  	  fonts = [
-  	    "FiraCode"
-  	  ];
-  	})
+    source-code-pro
+    jetbrains-mono
+    font-awesome
+    corefonts
+    (nerdfonts.override {
+      fonts = [
+        "FiraCode"
+      ];
+    })
   ];
 
   # Enable sound with pipewire.
@@ -86,19 +92,19 @@
   };
 
   nix = {
-  	settings = {
-  		auto-optimise-store = true;
-  	};
-  	gc = {
-  	  automatic = false;
-  	};
-  	package = pkgs.nixFlakes;
-  	registry.nixpkgs.flake = inputs.nixpkgs;
-  	extraOptions = ''
-  	  experimental-features = nix-command flakes
-  	  keep-outputs = true
-  	  keep-derivations = true
-  	'';
+    settings = {
+      auto-optimise-store = true;
+    };
+    gc = {
+      automatic = false;
+    };
+    package = pkgs.nixFlakes;
+    registry.nixpkgs.flake = attributes.nixpkgs;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+      keep-outputs = true
+      keep-derivations = true
+    '';
   };
 
   nixpkgs.config.allowUnfree = true;
