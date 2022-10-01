@@ -56,31 +56,36 @@
   };
 
   outputs = {self, ...} @ inputs:
-    inputs.flake-utils.lib.eachDefaultSystem (
-      system: let
-        nixpkgs = inputs.nixpkgs-unstable.legacyPackages.${system};
+    with inputs.flake-utils.lib;
+      eachSystem [system.x86_64-linux system.aarch64-linux] (
+        system: let
+          nixpkgs = inputs.nixpkgs-unstable.legacyPackages.${system};
 
-        user = "bryn";
-      in
-        with inputs; {
-          # nix flake check - https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-check.html
-          checks.${system} = import ./checks inputs;
+          user = "bryn";
+        in
+          with inputs; {
+            # nix flake check - https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-check.html
+            checks = {
+              test = nixpkgs.runCommand "test" {} ''
+                echo Test
+              '';
+            };
 
-          # Dev Shell with NixL Formatting Tools
-          devShell = nixpkgs.mkShell {
-            packages = [
-              alejandra.defaultPackage.${system}
-              nil.packages.${system}.nil
-              statix.defaultPackage.${system}
-            ];
-          };
+            # Dev Shell with NixL Formatting and Testing Tools
+            devShells.${system} = nixpkgs.mkShell {
+              packages = [
+                alejandra.defaultPackage.${system}
+                nil.packages.${system}.nil
+                statix.defaultPackage.${system}
+              ];
+            };
 
-          # nix fmt - https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html
-          formatter.${system} = alejandra.defaultPackage.${system};
+            # nix fmt - https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-fmt.html
+            formatter = alejandra.defaultPackage.${system};
 
-          homeConfigurations = import ./home inputs;
+            homeConfigurations = import ./home inputs;
 
-          nixosConfigurations = import ./nixos inputs;
-        }
-    );
+            nixosConfigurations = import ./nixos inputs;
+          }
+      );
 }
