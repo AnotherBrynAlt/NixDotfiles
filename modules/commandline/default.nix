@@ -1,0 +1,10 @@
+[
+  ./bat
+  ./direnv
+  ./exa
+  ./fzf
+  ./git
+  ./just
+  ./lazygit
+  ./nnn
+]
